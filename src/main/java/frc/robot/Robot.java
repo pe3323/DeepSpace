@@ -1,29 +1,28 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.UserInterface;
+import frc.robot.cargohandler.CargoHandler;
 import frc.robot.drivetrain.DriveBase;
+import frc.robot.hatchmanipulator.HatchManipulator;
 
 
 
 public class Robot extends TimedRobot 
 {
-
+  DriveBase drivetrain = new DriveBase(928);
   UserInterface ui = new UserInterface();
-  DriveBase drivetrain = new DriveBase();
-  DoubleSolenoid  solie = new DoubleSolenoid(1, 2);
- // Shuffleboard shuffie = new Shuffleboard(); For Sean's Favorite Shuffle on the Board
+  // CargoHandler cargoHandler = new CargoHandler();
+  // HatchManipulator hatchManipulator = new HatchManipulator();
   
   public void robotInit() 
   {
-
   }
 
   public void robotPeriodic() 
   {
-
+    Scheduler.getInstance().run();
   }
   
   public void autonomousInit() 
@@ -38,25 +37,12 @@ public class Robot extends TimedRobot
 
   public void teleopInit() 
   {
-    drivetrain.getEncoderLeft().reset();
-    solie.set(Value.kOff);
   }
 
   public void teleopPeriodic() 
   {
-    drivetrain.getDriveTrain().arcadeDrive(-ui.getDriveControl().getRawAxis(1), ui.getDriveControl().getRawAxis(0));
-    drivetrain.getEncoderLeft().getDistance(); 
-
-    if(ui.outButton.get())
-    {
-    solie.set(Value.kForward);
-    }
-    if(ui.inButton.get())
-    {
-    solie.set(Value.kReverse);
-    }
-    
-
+    drivetrain.drive(ui.getDriveControl().getRawAxis(1), ui.getDriveControl().getRawAxis(0));
+    drivetrain.log();
   }
 }
 // this page is for the entire robot. teleopPeriodic is for teleop periodiacally in the driverstation. 

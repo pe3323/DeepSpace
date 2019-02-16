@@ -1,57 +1,55 @@
 package frc.robot.drivetrain;
 
-
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX; 
-
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.*;
+//import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro; 
-import edu.wpi.first.wpilibj.Encoder; 
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem; 
-import edu.wpi.first.wpilibj.drive.DifferentialDrive; 
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 
 public class DriveBase extends Subsystem 
 {
-  private WPI_TalonSRX leftFront = new  WPI_TalonSRX(RobotMap.leftFrontID); 
-  private WPI_TalonSRX leftBack = new  WPI_TalonSRX(RobotMap.leftBackID);
-  private SpeedControllerGroup left = new SpeedControllerGroup(leftFront, leftBack);
+   WPI_TalonSRX frontLeft = new  WPI_TalonSRX(RobotMap.frontLeftID); 
+   WPI_TalonSRX backLeft = new  WPI_TalonSRX(RobotMap.backLeftID);
+   WPI_TalonSRX frontRight = new  WPI_TalonSRX(RobotMap.frontRightID);
+   WPI_TalonSRX backRight = new  WPI_TalonSRX(RobotMap.backRightID);
 
-  private WPI_TalonSRX rightFront = new  WPI_TalonSRX(RobotMap.rightFrontID);
-  private WPI_TalonSRX rightBack = new  WPI_TalonSRX(RobotMap.rightBackID);
-  private SpeedControllerGroup right = new SpeedControllerGroup(rightFront, rightBack);
+  int f;
 
-  private DifferentialDrive driveTrain = new DifferentialDrive(left, right);
+  private DifferentialDrive driveTrain = new DifferentialDrive(frontLeft, frontRight);
 
-  private Encoder encoderRight = new Encoder(RobotMap.rightBlueID, RobotMap.rightYellowID);
-  private Encoder encoderLeft = new Encoder(RobotMap.leftBlueID, RobotMap.leftYellowID);
   private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
-  private int dpp = 3;
+  public boolean uiEnabled=true;
 
-  public DriveBase()
+  public DriveBase(int toFeet)
   {
-    encoderLeft.setDistancePerPulse(dpp);
-    encoderRight.setDistancePerPulse(dpp);
+    SmartDashboard.putData(getMove());
+    this.f= toFeet;
+    
+    backLeft.follow(frontLeft);
+    backRight.follow(frontRight);
+    frontLeft.setSensorPhase(true);
+    frontRight.setSensorPhase(true);
   }
 
   public void initDefaultCommand() 
   {
 
   }
+
+  public Command getMove()
+  {
+    return new Move(this);
+  }
+
   public ADXRS450_Gyro getGyro()
     {
         return gyro;
-    }
-
-    public Encoder getEncoderLeft()
-    {
-        return encoderLeft;
-    }
-
-    public Encoder getEncoderRight()
-    {
-        return encoderRight;
     }
 
     public DifferentialDrive getDriveTrain()
@@ -59,16 +57,10 @@ public class DriveBase extends Subsystem
         return driveTrain;
     }
 
-    public void startMove(double speed)
-    {
-        driveTrain.arcadeDrive(speed,0);
-    }
-
-
-    public void startTurn(double speed, boolean right)
+    public void startTurn(double speed, boolean cw)
     {
         double rotation= 1;
-        if (right)
+        if (cw)
             rotation= rotation*-1;
         driveTrain.arcadeDrive(speed,rotation);
     }
@@ -77,4 +69,24 @@ public class DriveBase extends Subsystem
     {
         driveTrain.stopMotor();
     }
+
+    public void drive(double speed, double rotation) 
+    {
+        if (uiEnabled)
+        driveTrain.arcadeDrive(-speed, rotation);
+        else
+        {
+        frontLeft.set(ControlMode.Position, 10*f);
+        frontRight.set(ControlMode.Position, 10*f);
+        }
+        
+	}
+
+    public void log() 
+    {
+        SmartDashboard.putNumber("Left Distance", (double) frontLeft.getSensorCollection().getQuadraturePosition()/f);
+        SmartDashboard.putNumber("Left Velocity", ((double)frontLeft.getSensorCollection().getQuadratureVelocity())/f*10);
+        SmartDashboard.putNumber("Right Distance", (double) frontRight.getSensorCollection().getQuadraturePosition()/f);
+        SmartDashboard.putNumber("Right Velocity", ((double)frontRight.getSensorCollection().getQuadratureVelocity())/f*10);
+	}
 }
