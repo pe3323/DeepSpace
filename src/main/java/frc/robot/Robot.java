@@ -15,11 +15,7 @@ public class Robot extends TimedRobot
   DriveBase drivetrain = new DriveBase(928);
   UserInterface ui = new UserInterface();
   CargoHandler cargoHandler = new CargoHandler();
-<<<<<<< HEAD
-  // HatchManipulator hatchManipulator = new HatchManipulator();
-=======
   HatchManipulator hatchManipulator = new HatchManipulator();
->>>>>>> b58be74610290e890fe278b54d3068f2919ece88
   
   public void robotInit() 
   {
