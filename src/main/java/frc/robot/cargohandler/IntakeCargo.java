@@ -24,7 +24,7 @@ public class IntakeCargo extends Command
     ch.intake.set(1);
     ch.shooterLeft.set(1);
     ch.shooterRight.set(1);
-    ch.intakeArm.set(Value.kForward);
+    // ch.intakeArm.set(Value.kForward);
   }
 
   

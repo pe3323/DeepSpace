@@ -20,7 +20,7 @@ public class DriveBase extends Subsystem
 
   int f;
 
-  private DifferentialDrive driveTrain = new DifferentialDrive(frontLeft, frontRight);
+  private DifferentialDrive driveTrain = new DifferentialDrive(frontRight, frontLeft);
 
   private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
