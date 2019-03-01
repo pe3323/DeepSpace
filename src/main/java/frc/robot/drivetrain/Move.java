@@ -20,15 +20,15 @@ public class Move extends Command
   protected void initialize() 
   {
     db.uiEnabled=false;
-    db.frontRight.getSensorCollection().setQuadraturePosition(0, 30);
-    db.frontLeft.getSensorCollection().setQuadraturePosition(0, 30);
-    db.frontLeft.config_kP(0, .001,30);
-    db.frontRight.config_kP(0, .001,30);
+    db.leftMain.getSensorCollection().setQuadraturePosition(0, 30);
+    db.rightMain.getSensorCollection().setQuadraturePosition(0, 30);
+    db.leftMain.config_kP(0, .001,30);
+    db.rightMain.config_kP(0, .001,30);
   }
   protected void execute() 
   {
-    db.frontLeft.set(ControlMode.Position, 5000);
-    db.frontRight.set(ControlMode.Position, 5000);
+    db.leftMain.set(ControlMode.Position, 5000);
+    db.rightMain.set(ControlMode.Position, 5000);
   }
 
   protected boolean isFinished() 

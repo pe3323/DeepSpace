@@ -1,11 +1,13 @@
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.UserInterface;
 import frc.robot.cargohandler.CargoHandler;
 import frc.robot.drivetrain.DriveBase;
+import frc.robot.elevator.Elevator;
 import frc.robot.hatchmanipulator.HatchManipulator;
 
 
@@ -15,11 +17,13 @@ public class Robot extends TimedRobot
   DriveBase drivetrain = new DriveBase(928);
   UserInterface ui = new UserInterface();
   CargoHandler cargoHandler = new CargoHandler();
-  HatchManipulator hatchManipulator = new HatchManipulator();
+  // HatchManipulator hatchManipulator = new HatchManipulator();
+  Elevator elevator = new Elevator();
   
   public void robotInit() 
   {
-    CameraServer.getInstance().startAutomaticCapture();
+  SmartDashboard.putNumber("drive", 0);
+  SmartDashboard.putNumber("turn", 0);
   }
 
   public void robotPeriodic() 
@@ -34,9 +38,23 @@ public class Robot extends TimedRobot
 
   public void autonomousPeriodic() 
   {
+    boolean semiAuto;
+    double driveConstant = SmartDashboard.getNumber("drive", 0);
+    double turnConstant = SmartDashboard.getNumber("turn", 0);
+    double vertOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("ty").getDouble(0);
+    double horzOffset = NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0);
+    
+    if(ui.a.get())
+    {
+        drivetrain.drive(vertOffset*driveConstant, horzOffset*turnConstant);
+        semiAuto = true;
+    }
+    else
+    {
     drivetrain.drive(ui.getDriveControl().getRawAxis(1), ui.getDriveControl().getRawAxis(0));
-    drivetrain.log();
-    cargoHandler.driveShooter(ui.getDriveControl());
+    semiAuto = false;
+    }
+    SmartDashboard.putBoolean("Semi Auto", semiAuto);
   }
 
   public void teleopInit() 
@@ -48,7 +66,9 @@ public class Robot extends TimedRobot
   {
     drivetrain.drive(ui.getDriveControl().getRawAxis(1), ui.getDriveControl().getRawAxis(0));
     drivetrain.log();
-    cargoHandler.driveShooter(ui.getDriveControl());
+    cargoHandler.manualControl(ui.getMechControl(), 0);
+    elevator.manualControl(ui.getMechControl(), 1);
+    
   }
 }
 // this page is for the entire robot. teleopPeriodic is for teleop periodiacally in the driverstation. 

@@ -1,6 +1,7 @@
 package frc.robot.elevator;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class GoToElev extends Command 
@@ -9,7 +10,7 @@ public class GoToElev extends Command
   int pos = 0;
   int upperRange = 0;
   int lowerRange = 0;
-  AnalogInput posSwitch = null;
+  DigitalInput posSwitch = null;
 
   public GoToElev( Elevator elev, int pos) 
   {
@@ -47,19 +48,17 @@ public class GoToElev extends Command
   {
     if (elev.elevatorEncoder.get()>upperRange)
       {
-        elev.elevatorDriveOne.set(-1);
-        elev.elevatorDriveTwo.set(-1);
+        elev.elevatorMain.set(-1);
       }
     if (elev.elevatorEncoder.get()<lowerRange)
       {
-        elev.elevatorDriveTwo.set(1);
-        elev.elevatorDriveOne.set(1);
+        elev.elevatorMain.set(1);
       }
   }
 
   protected boolean isFinished() 
   {
-    if (posSwitch.getAverageVoltage()>3)
+    if (posSwitch.get())
     return true;
     else
     return false;
@@ -67,8 +66,7 @@ public class GoToElev extends Command
 
   protected void end() 
   {
-    elev.elevatorDriveTwo.set(0);
-    elev.elevatorDriveOne.set(0);
+    elev.elevatorMain.set(0);
   }
 
   protected void interrupted() 

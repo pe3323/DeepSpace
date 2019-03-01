@@ -7,7 +7,7 @@ public class UserInterface
 {
     private XboxController driveController = new XboxController(0);
     private XboxController mechController = new XboxController(1);
-    private JoystickButton a = new JoystickButton(mechController, 1);
+    public JoystickButton a = new JoystickButton(driveController, 1);
     private JoystickButton b= new JoystickButton(mechController, 2);
     private JoystickButton x = new JoystickButton(mechController, 3);
     private JoystickButton y = new JoystickButton(mechController, 4);

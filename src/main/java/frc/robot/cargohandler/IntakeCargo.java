@@ -1,6 +1,4 @@
 package frc.robot.cargohandler;
-
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Command;
 
 public class IntakeCargo extends Command 
@@ -30,7 +28,7 @@ public class IntakeCargo extends Command
   
   protected boolean isFinished() 
   {
-    if(ch.cargoSwitch.getVoltage()>3)
+    if(ch.cargoSwitch.get())
     return true;
     else
     return false;

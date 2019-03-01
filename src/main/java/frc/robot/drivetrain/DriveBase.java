@@ -2,9 +2,9 @@ package frc.robot.drivetrain;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.*;
-//import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro; 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Subsystem; 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -13,16 +13,14 @@ import frc.robot.RobotMap;
 
 public class DriveBase extends Subsystem 
 {
-   WPI_TalonSRX frontLeft = new  WPI_TalonSRX(RobotMap.frontLeftID); 
-   WPI_TalonSRX backLeft = new  WPI_TalonSRX(RobotMap.backLeftID);
-   WPI_TalonSRX frontRight = new  WPI_TalonSRX(RobotMap.frontRightID);
-   WPI_TalonSRX backRight = new  WPI_TalonSRX(RobotMap.backRightID);
+   WPI_VictorSPX leftFollower = new  WPI_VictorSPX(RobotMap.leftFollowerID); 
+   WPI_TalonSRX leftMain = new  WPI_TalonSRX(RobotMap.leftMainID);
+   WPI_VictorSPX rightFollower = new  WPI_VictorSPX(RobotMap.rightFollowerID);
+   WPI_TalonSRX rightMain = new  WPI_TalonSRX(RobotMap.rightMainID);
 
   int f;
 
-  private DifferentialDrive driveTrain = new DifferentialDrive(frontRight, frontLeft);
-
-  private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+  private DifferentialDrive driveTrain = new DifferentialDrive(leftMain, rightMain);
 
   public boolean uiEnabled=true;
 
@@ -31,10 +29,10 @@ public class DriveBase extends Subsystem
     SmartDashboard.putData(getMove());
     this.f= toFeet;
     
-    backLeft.follow(frontLeft);
-    backRight.follow(frontRight);
-    frontLeft.setSensorPhase(true);
-    frontRight.setSensorPhase(true);
+    leftFollower.follow(leftMain);
+    rightFollower.follow(rightMain);
+    leftMain.setSensorPhase(true);
+    rightMain.setSensorPhase(true);
   }
 
   public void initDefaultCommand() 
@@ -46,11 +44,6 @@ public class DriveBase extends Subsystem
   {
     return new Move(this);
   }
-
-  public ADXRS450_Gyro getGyro()
-    {
-        return gyro;
-    }
 
     public DifferentialDrive getDriveTrain()
     {
@@ -76,17 +69,18 @@ public class DriveBase extends Subsystem
         driveTrain.arcadeDrive(-speed, rotation);
         else
         {
-        frontLeft.set(ControlMode.Position, 10*f);
-        frontRight.set(ControlMode.Position, 10*f);
+        leftMain.set(ControlMode.Position, 10*f);
+        rightMain.set(ControlMode.Position, 10*f);
         }
         
 	}
 
     public void log() 
     {
-        SmartDashboard.putNumber("Left Distance", (double) frontLeft.getSensorCollection().getQuadraturePosition()/f);
-        SmartDashboard.putNumber("Left Velocity", ((double)frontLeft.getSensorCollection().getQuadratureVelocity())/f*10);
-        SmartDashboard.putNumber("Right Distance", (double) frontRight.getSensorCollection().getQuadraturePosition()/f);
-        SmartDashboard.putNumber("Right Velocity", ((double)frontRight.getSensorCollection().getQuadratureVelocity())/f*10);
+        SmartDashboard.putNumber("Left Distance", (double) leftMain.getSensorCollection().getQuadraturePosition()/f);
+        SmartDashboard.putNumber("Left Velocity", ((double)leftMain.getSensorCollection().getQuadratureVelocity())/f*10);
+        SmartDashboard.putNumber("Right Distance", (double) rightMain.getSensorCollection().getQuadraturePosition()/f);
+        SmartDashboard.putNumber("Right Velocity", ((double)rightMain.getSensorCollection().getQuadratureVelocity())/f*10);
 	}
 }
+

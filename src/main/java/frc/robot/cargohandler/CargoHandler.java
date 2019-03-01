@@ -1,35 +1,36 @@
 package frc.robot.cargohandler;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 
 
 public class CargoHandler extends Subsystem 
 {
 
-    WPI_TalonSRX intake = new WPI_TalonSRX(RobotMap.cargoIntakeID);
-    WPI_TalonSRX shooterLeft = new WPI_TalonSRX(RobotMap.cargoExhaustLeftID);
-    WPI_TalonSRX shooterRight = new WPI_TalonSRX(RobotMap.cargoExhaustRightID);
+  WPI_VictorSPX intake = new WPI_VictorSPX(RobotMap.cargoIntakeID);
+  WPI_VictorSPX shooterLeft = new WPI_VictorSPX(RobotMap.cargoExhaustLeftID);
+  WPI_VictorSPX shooterRight = new WPI_VictorSPX(RobotMap.cargoExhaustRightID);
     // DoubleSolenoid intakeArm = new DoubleSolenoid(RobotMap.cargoArmInID, RobotMap.cargoArmOutID);
-    AnalogInput cargoSwitch = new AnalogInput(RobotMap.cargoSwitchID);
+  DigitalInput cargoSwitch = new DigitalInput(RobotMap.cargoSwitchID);
 
   public CargoHandler() 
   {
     shooterRight.follow(shooterLeft);
     shooterRight.setInverted(true);
+    SmartDashboard.putNumber("Shooter Speed", 0);
   }
   public void initDefaultCommand() 
   {
 
   }
 
-  public void driveShooter(XboxController x) 
+  public void manualControl(XboxController x, int axis) 
   {
-    shooterLeft.set(x.getRawAxis(5));
+    shooterLeft.set(SmartDashboard.getNumber("Shooter Speed", 0));
   }
 }
