@@ -1,49 +1,37 @@
 package frc.robot.cargohandler;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.command.Command;
-
-public class IntakeCargo extends Command 
+public class IntakeCargo extends edu.wpi.first.wpilibj.command.Command
 {
   CargoHandler ch;
-
-  public IntakeCargo( CargoHandler ch) 
+  
+  public IntakeCargo(CargoHandler ch)
   {
     requires(ch);
     this.ch = ch;
   }
 
-  protected void initialize() 
-  {
+  protected void initialize() {}
 
+  protected void execute()
+  {
+    ch.shooterLeft.set(.3);
   }
-
   
-  protected void execute() 
+  protected boolean isFinished()
   {
-    ch.intake.set(1);
-    ch.shooterLeft.set(1);
-    ch.shooterRight.set(1);
-    ch.intakeArm.set(Value.kForward);
-  }
-
-  
-  protected boolean isFinished() 
-  {
-    if(ch.cargoSwitch.getVoltage()>3)
-    return true;
-    else
+    if (ch.cargoInShooter.get()) {
+      return true;
+    }
     return false;
   }
-
-  protected void end() 
+  
+  protected void end()
   {
-    ch.intake.set(0);
     ch.shooterLeft.set(0);
-    ch.shooterRight.set(0);
   }
-
-  protected void interrupted() 
+  
+  
+  protected void interrupted()
   {
     end();
   }
